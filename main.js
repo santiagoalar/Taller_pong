@@ -28,17 +28,20 @@
 		this.width = width;
 		this.height = height;
 		this.board = board;
-
 		this.board.bars.push(this);
 		this.kind = "rectangle";
+		this.speed = 10;
 	}
 
 	self.Bar.prototype = {
 		down: function(){
-
+			this.y += this.speed;
 		},
 		up: function(){
-
+			this.x -= this.speed;
+		},
+		toString: function(){
+			return "x: " + this.x + " y: " + this.y;
 		}
 	}
 })();
@@ -74,16 +77,24 @@
 	}
 })();
 
+var board = new Board(800, 400);
+var bar = new Bar(20,100,40,100, board);
+var bar = new Bar(735,100,40,100, board);
+var canvas = document.getElementById("canvas");
+//Se pasa la vista
+board_view = new BoardView(canvas,board);
 
+document.addEventListener('keydown', function(ev){
+	if (ev.keyCode == 38) {
+		bar.up();
+	}else if(ev.keyCode == 40){
+		bar.down();
+	}
+	console.log(bar.toString());
+});
 window.addEventListener("load",main);
 //CONTROLADOR
 function main(argument) {
-	var board = new Board(800, 400);
-	var bar = new Bar(20,100,40,100, board)
-	var bar = new Bar(735,100,40,100, board)
-	console.log(board);
-	var canvas = document.getElementById("canvas");
-	//Se pasa la vista
-	board_view = new BoardView(canvas,board)
+
 	board_view.draw();
 }
