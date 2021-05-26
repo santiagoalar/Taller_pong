@@ -75,10 +75,12 @@
 
 	self.Bar.prototype = {
 		down: function(){
+			if(this.y < this.board.height - this.height)
 			this.y += this.speed;
 		},
 		up: function(){
-			this.y -= this.speed;
+			if(this.y> 0)
+				this.y -= this.speed;
 		},
 		toString: function(){
 			return "x: "+ this.x +" y: "+ this.y ;
@@ -101,19 +103,23 @@
 			this.ctx.clearRect(0,0,this.board.width,this.board.height);
 		},
 		draw: function(){
-
 			for (var i = this.board.elements.length - 1; i >= 0; i--) {
 				var el = this.board.elements[i];
-
 				draw(this.ctx,el);
 			};
 		},
 		check_collisions: function(){
-
 			for (var i = this.board.bars.length - 1; i >= 0; i--) {
 				var bar = this.board.bars[i];
 				if(hit(bar, this.board.ball)){
-
+					this.board.ball.collision(bar);
+				}
+			};
+		},
+		check_collisions_borders: function(){
+			for (var i = this.board.bars.length - 1; i >= 0; i--) {
+				var bar = this.board.bars[i];
+				if(hit(bar, this.board.ball)){
 					this.board.ball.collision(bar);
 				}
 			};
@@ -123,6 +129,7 @@
 				this.clean();
 				this.draw();
 				this.check_collisions();
+				//this.check_collisions_borders();
 				this.board.ball.move();	
 			}
 			
@@ -130,12 +137,9 @@
 	}
 
 	function hit(a,b){
-		//Revisa si a colisiona con b
 		var hit = false;
-		//Colsiones horizontales
 		if(b.x + b.width >= a.x && b.x < a.x + a.width)
 		{
-			//Colisiones verticales
 			if(b.y + b.height >= a.y && b.y < a.y + a.height)
 				hit = true;
 		}
@@ -177,29 +181,32 @@
 var board = new Board(800,400);
 var bar = new Bar(20,100,40,100,board);
 var bar_2 = new Bar(735,100,40,100,board);
+var bar_3 = new Bar(0,0,800,4,board)
+var bar_4 = new Bar(0,400,800,4,board)
 var canvas = document.getElementById('canvas');
 var board_view = new BoardView(canvas,board);
 var ball = new Ball(350, 100, 10,board);
 
 
+
 document.addEventListener("keydown",function(ev){
 	
-	if(ev.keyCode == 38){
+	if(ev.key == "ArrowUp"){
 		ev.preventDefault();
 		bar.up();
 	}
-	else if(ev.keyCode == 40){
+	else if(ev.key == "ArrowDown"){
 		ev.preventDefault();
 		bar.down();
-	}else if(ev.keyCode === 87){
+	}else if(ev.code === "KeyW"){
 		ev.preventDefault();
 		//W
 		bar_2.up();
-	}else if(ev.keyCode === 83){
+	}else if(ev.code === "KeyS"){
 		ev.preventDefault();
 		//S
 		bar_2.down();
-	}else if(ev.keyCode === 32){
+	}else if(ev.code === "Space"){
 		ev.preventDefault();
 		board.playing = !board.playing;
 	}
