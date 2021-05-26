@@ -35,8 +35,16 @@
 	}
 	self.Ball.prototype = {
 		move: function(){
+			if(this.x > board.width || this.x<0){
+				this.cleanBall();
+				board.playing = false;
+			}
 			this.x += (this.speed_x * this.direction);
 			this.y += (this.speed_y);
+		},
+		returnBallOrigin: function () {
+			this.x = 350; 
+			this.y = 100;
 		},
 		get width(){
 			return this.radius * 2;
@@ -116,20 +124,11 @@
 				}
 			};
 		},
-		check_collisions_borders: function(){
-			for (var i = this.board.bars.length - 1; i >= 0; i--) {
-				var bar = this.board.bars[i];
-				if(hit(bar, this.board.ball)){
-					this.board.ball.collision(bar);
-				}
-			};
-		},
 		play: function(){
 			if(this.board.playing){
 				this.clean();
 				this.draw();
 				this.check_collisions();
-				//this.check_collisions_borders();
 				this.board.ball.move();	
 			}
 			
@@ -186,8 +185,6 @@ var bar_4 = new Bar(0,400,800,4,board)
 var canvas = document.getElementById('canvas');
 var board_view = new BoardView(canvas,board);
 var ball = new Ball(350, 100, 10,board);
-
-
 
 document.addEventListener("keydown",function(ev){
 	
