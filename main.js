@@ -36,7 +36,8 @@
 	self.Ball.prototype = {
 		move: function(){
 			if(this.x > board.width || this.x<0){
-				this.cleanBall();
+				updateScoreKeeper(this.x);
+				this.returnBallOrigin();
 				board.playing = false;
 			}
 			this.x += (this.speed_x * this.direction);
@@ -177,6 +178,21 @@
 	}
 })();
 
+
+class Player{
+	constructor(position){
+		this.position = position;
+        this.points = 0;
+    }
+	get getPoints(){
+		return this.points;
+	}
+	addPoint(){
+		this.points++;
+		document.getElementById("scorePlayer" + this.position).textContent= this.points + " points";
+	}
+}
+
 var board = new Board(800,400);
 var bar = new Bar(20,100,40,100,board);
 var bar_2 = new Bar(735,100,40,100,board);
@@ -185,6 +201,8 @@ var bar_4 = new Bar(0,400,800,4,board)
 var canvas = document.getElementById('canvas');
 var board_view = new BoardView(canvas,board);
 var ball = new Ball(350, 100, 10,board);
+var player1 = new Player(1);
+var player2 = new Player(2);
 
 document.addEventListener("keydown",function(ev){
 	
@@ -216,4 +234,8 @@ window.requestAnimationFrame(controller);
 function controller(){
 	board_view.play();
 	requestAnimationFrame(controller);
+}
+
+function updateScoreKeeper(x_position){
+	(x_position>board.width)? player1.addPoint():player2.addPoint();
 }
